@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using NUnit.Framework.Constraints;
 
 namespace BudgetLab
 {
@@ -24,25 +25,19 @@ namespace BudgetLab
             var start_yearMonth = startDate.ToString("yyyyMM");
             var end_yearMonth = endDate.ToString("yyyyMM");
             var startBudget = budgets.FirstOrDefault(x => x.YearMonth == start_yearMonth);
-            var endBudget = budgets.FirstOrDefault(x => x.YearMonth == end_yearMonth);
-            var starRemain = DateTime.DaysInMonth(startDate.Year, startDate.Month) - startDate.Day + 1;
-            var endRemain = endDate.Day;
-            var startDaysInMonth = DateTime.DaysInMonth(startDate.Year, startDate.Month);
-            var endDaysInMonth = DateTime.DaysInMonth(endDate.Year, endDate.Month);
 
             if (start_yearMonth == end_yearMonth)
             {
                 if (startBudget != null)
                 {
-                    var startMonthAmount = ((double)startBudget.Amount / startDaysInMonth) * ((endDate - startDate).Days + 1);
-                    return startMonthAmount;
+                    return GetSingleBudget(startDate, startBudget) * ((endDate - startDate).Days + 1);
                 }
             }
             else
             {
                 var sum = 0d;
                 if( startBudget != null )
-                    sum += (startBudget.Amount / startDaysInMonth) * starRemain;
+                    sum += GetSingleBudget(startDate, startBudget) * (DateTime.DaysInMonth(startDate.Year, startDate.Month) - startDate.Day + 1);
 
                 foreach (var budget in budgets)
                 {
@@ -50,13 +45,18 @@ namespace BudgetLab
                     if (int.Parse(start_yearMonth) < yearMonth && yearMonth < int.Parse(end_yearMonth))
                         sum += budget.Amount;
                 }
-
+                var endBudget = budgets.FirstOrDefault(x => x.YearMonth == end_yearMonth);
                 if (endBudget != null)
-                    sum  += (endBudget.Amount / endDaysInMonth) * endRemain;
+                    sum  += GetSingleBudget(endDate, endBudget) * endDate.Day;
                 return sum;
             }
 
             return 0;
+        }
+
+        private static double GetSingleBudget(DateTime date, Budget budget)
+        {
+            return (double)budget.Amount / DateTime.DaysInMonth(date.Year, date.Month);
         }
     }
 }
