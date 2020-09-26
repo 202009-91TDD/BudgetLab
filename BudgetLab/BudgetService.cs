@@ -22,11 +22,15 @@ namespace BudgetLab
 
             var budgets = _budgetRepo.GetAll();
 
+
+
             var yearMonth = startDate.ToString("yyyyMM");
 
             var amount = (double)budgets.Where(x=>x.YearMonth == yearMonth).Sum(x=>x.Amount);
 
-            return amount;
+            var daysInMonth = DateTime.DaysInMonth(startDate.Year,startDate.Month);
+
+            return (amount / daysInMonth) * ((endDate - startDate).Days+1);
         }
     }
 }

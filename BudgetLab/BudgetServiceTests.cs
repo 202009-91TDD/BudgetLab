@@ -30,7 +30,7 @@ namespace BudgetLab
         [Test]
         public void query_whole_month()
         {
-            _budgetRepo.GetAll().ReturnsForAnyArgs(new List<Budget>()
+            GivenBudget(new List<Budget>()
             {
                 new Budget() {YearMonth = "202001", Amount = 100}
             });
@@ -40,7 +40,41 @@ namespace BudgetLab
             AmountShouldBe(startDate, endDate, 100);
         }
 
-        private void AmountShouldBe(DateTime startDate, DateTime endDate, double expected)
+        private void GivenBudget(List<Budget> budget)
+        {
+            _budgetRepo.GetAll().ReturnsForAnyArgs(budget);
+        }
+
+        [Test]
+        public void no_budget()
+        {
+            GivenBudget(new List<Budget>());
+
+            var startDate = new DateTime(2020, 2, 1);
+            var endDate = new DateTime(2020, 2, 10);
+            AmountShouldBe(startDate, endDate, 0);
+
+        }
+
+        [Test]
+        public void single_date()
+        {
+            GivenBudget(new List<Budget>()
+            {
+                new Budget()
+                {
+                    YearMonth = "202001",Amount = 310
+                }
+            });
+
+            var startDate = new DateTime(2020, 1, 1);
+            var endDate = new DateTime(2020, 1, 1);
+            AmountShouldBe(startDate, endDate, 10);
+
+        }
+
+
+        private void  AmountShouldBe(DateTime startDate, DateTime endDate, double expected)
         {
             var amount = _budgetService.Query(startDate, endDate);
 
