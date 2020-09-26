@@ -73,6 +73,27 @@ namespace BudgetLab
 
         }
 
+        [Test]
+        public void cross_month()
+        {
+            GivenBudget(new List<Budget>()
+            {
+                new Budget()
+                {
+                    YearMonth = "202001",Amount = 310
+                },
+                new Budget()
+                {
+                    YearMonth = "202002",Amount = 0
+                }
+            });
+
+            var startDate = new DateTime(2020, 1, 1);
+            var endDate = new DateTime(2020, 2, 2);
+            AmountShouldBe(startDate, endDate, 310);
+
+        }
+
 
         private void  AmountShouldBe(DateTime startDate, DateTime endDate, double expected)
         {
