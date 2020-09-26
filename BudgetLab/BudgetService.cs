@@ -37,16 +37,23 @@ namespace BudgetLab
                     var startMonthAmount = ((double)startBudget.Amount / startDaysInMonth) * ((endDate - startDate).Days + 1);
                     return startMonthAmount;
                 }
-
             }
             else
             {
-                if (startBudget != null && endBudget != null)
+                var sum = 0d;
+                if( startBudget != null )
+                    sum += (startBudget.Amount / startDaysInMonth) * starRemain;
+
+                foreach (var budget in budgets)
                 {
-                    var startMonthAmount = (startBudget.Amount / startDaysInMonth) * starRemain;
-                    var endMonthAmount = (endBudget.Amount / endDaysInMonth) * endRemain;
-                    return startMonthAmount + endMonthAmount;
+                    var yearMonth = int.Parse(budget.YearMonth);
+                    if (int.Parse(start_yearMonth) < yearMonth && yearMonth < int.Parse(end_yearMonth))
+                        sum += budget.Amount;
                 }
+
+                if (endBudget != null)
+                    sum  += (endBudget.Amount / endDaysInMonth) * endRemain;
+                return sum;
             }
 
             return 0;

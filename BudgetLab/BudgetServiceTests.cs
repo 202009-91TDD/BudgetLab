@@ -74,7 +74,45 @@ namespace BudgetLab
         }
 
         [Test]
-        public void cross_month()
+        public void cross_month_one_month()
+        {
+            GivenBudget(new List<Budget>()
+            {
+                new Budget()
+                {
+                    YearMonth = "202001",Amount = 310
+                },
+                new Budget()
+                {
+                    YearMonth = "202002",Amount = 290
+                }
+            });
+
+
+            var startDate = new DateTime(2020, 1, 31);
+            var endDate = new DateTime(2020, 2, 29);
+            AmountShouldBe(startDate, endDate, 300);
+        }
+
+        [Test]
+        public void cross_month_one_month_not_exist()
+        {
+            GivenBudget(new List<Budget>()
+            {
+                new Budget()
+                {
+                    YearMonth = "202001",Amount = 310
+                }
+            });
+
+
+            var startDate = new DateTime(2020, 1, 1);
+            var endDate = new DateTime(2020, 2, 2);
+            AmountShouldBe(startDate, endDate, 310);
+        }
+
+        [Test]
+        public void cross_month_one_month_no_data()
         {
             GivenBudget(new List<Budget>()
             {
@@ -88,10 +126,35 @@ namespace BudgetLab
                 }
             });
 
+
             var startDate = new DateTime(2020, 1, 1);
             var endDate = new DateTime(2020, 2, 2);
             AmountShouldBe(startDate, endDate, 310);
+        }
 
+        [Test]
+        public void cross_multi_month()
+        {
+            GivenBudget(new List<Budget>()
+            {
+                new Budget()
+                {
+                    YearMonth = "202001",Amount = 310
+                },
+                new Budget()
+                {
+                    YearMonth = "202002",Amount = 290
+                },
+                new Budget()
+                {
+                    YearMonth = "202003",Amount = 3100
+                }
+            });
+
+
+            var startDate = new DateTime(2020, 1, 31);
+            var endDate = new DateTime(2020, 3, 2);
+            AmountShouldBe(startDate, endDate, 500);
         }
 
 
